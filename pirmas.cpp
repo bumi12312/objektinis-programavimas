@@ -5,6 +5,8 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -59,6 +61,37 @@ void ivestiRankiniu(vector<studentas> &s) {
         apskaiciuotiGalutini(stud);
         s.push_back(stud);
     }
+}
+void nuskaitytiIsFailo(vector<studentas> &s) {
+    string failoPav;
+    cout << "Iveskite failo pavadinima: ";
+    cin >> failoPav;
+    cin.ignore();
+    ifstream failas(failoPav);
+    if (!failas.is_open()) {
+        cout << "Nepavyko atidaryti failo\n";
+        return;
+    }
+    string eilute;
+    getline(failas, eilute);
+    while (getline(failas, eilute)) {
+        if (eilute.empty()) continue;
+        studentas stud;
+        istringstream iss(eilute);
+        iss >> stud.pavarde >> stud.vardas;
+        int balas;
+        while (iss >> balas) {
+            stud.nd.push_back(balas);
+        }
+        if (!stud.nd.empty()) {
+            stud.egz = stud.nd.back();
+            stud.nd.pop_back();
+        }
+        apskaiciuotiGalutini(stud);
+        s.push_back(stud);
+    }
+    failas.close();
+    cout << "Duomenys is failo sekmingai nuskaityti (" << s.size() << " studentu).\n";
 }
 void generuotiAtsitiktinai(vector<studentas> &s) {
     int studSk;
@@ -119,10 +152,11 @@ int main()
     vector<studentas> s;
     int pasirink;
     do {
-        cout << "\n===== MENIU =====\n";
+        cout << "\n----- MENIU -----\n";
         cout << "1 - Ivesti studentu duomenis ranka\n";
         cout << "2 - Generuoti studentu duomenis\n";
-        cout << "3 - Rodyti rezultatus\n";
+        cout << "3 - Duomenu nuskaitymas is failo\n";
+        cout << "4 - Rodyti rezultatus\n";
         cout << "0 - Baigti darba\n";
         cout << "Pasirinkimas: ";
         cin >> pasirink;
@@ -133,7 +167,10 @@ int main()
             case 2:
                 generuotiAtsitiktinai(s);
                 break;
-            case 3: {
+            case 3:
+                nuskaitytiIsFailo(s);
+                break;
+            case 4: {
                 cout << "Ka naudoti galutinio balo skaiciavimui?\n";
                 cout << "1 - Vidurkis\n2 - Mediana\n3 - Abu\n";
                 int pasirinkimas;
