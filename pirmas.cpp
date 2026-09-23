@@ -3,6 +3,8 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 
@@ -14,9 +16,25 @@ struct studentas {
     float galutinisVid = 0;
     float galutinisMed = 0;
 };
-
+void apskaiciuotiGalutini(studentas &s) {
+    int sum = 0;
+    for (int balas : s.nd) sum += balas;
+    double vidurkis = (double)sum / s.nd.size();    
+    vector<int> nd2 = s.nd;
+    sort(nd2.begin(), nd2.end());
+    int n = nd2.size();
+    float mediana;
+    if (n % 2 == 1) {
+        mediana = nd2[n/2];
+    } else {
+        mediana = (nd2[n/2 - 1] + nd2[n/2]) / 2.0;
+    }
+    s.galutinisVid = 0.4*vidurkis + 0.6*s.egz;
+    s.galutinisMed = 0.4*mediana + 0.6*s.egz;
+}
 int main()
 {
+    srand((unsigned)time(0));
     int studSk;
     cout << "Studentu skaičius: ";
     cin >> studSk;
