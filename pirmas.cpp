@@ -87,7 +87,7 @@ void generuotiAtsitiktinai(vector<studentas> &s) {
 }
 void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
     if (s.empty()) {
-        cout << "Duomenu nera - pirmiausiai ivesk arba sugeneruok duomenis.\n";
+        cout << "Duomenu nera - ivesk arba sugeneruok duomenis.\n";
         return;
     }
     cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde";
@@ -116,61 +116,38 @@ void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
 int main()
 {
     srand((unsigned)time(0));
-    int studSk;
-    cout << "Studentu skaičius: ";
-    cin >> studSk;
-    cout << "Pasirinkite ką naudoti galutinio balo skaičiavimui?\n";
-    cout << "1 - Vidurkis\n";
-    cout << "2 - Mediana\n";
-    cout << "3 - Abu\n";
-    int pasirinkimas;
-    cout << "Pasirinkimas: ";
-    cin >> pasirinkimas;
-    cin.ignore();
-    
-    vector<studentas> s(studSk);
-    for(int i=0;i<studSk;i++) {
-        cout << "\n" << (i+1) << "-as studentas\n";
-        cout << "Vardas: ";
-        cin >> s[i].vardas;
-        cout << "Pavarde: ";
-        cin >> s[i].pavarde;
-        cin.ignore();
-        cout << "Namu darbu balai (palikti tuscia, kad baigit):\n";
-        int sum = 0;
-        while (true) {
-            string eilute;
-            getline(cin, eilute);
-            if (eilute.empty()) {
+    vector<studentas> s;
+    int pasirink;
+    do {
+        cout << "\n===== MENIU =====\n";
+        cout << "1 - Ivesti studentu duomenis ranka\n";
+        cout << "2 - Generuoti studentu duomenis\n";
+        cout << "3 - Rodyti rezultatus\n";
+        cout << "0 - Baigti darba\n";
+        cout << "Pasirinkimas: ";
+        cin >> pasirink;
+        switch (pasirink) {
+            case 1:
+                ivestiRankiniu(s);
+                break;
+            case 2:
+                generuotiAtsitiktinai(s);
+                break;
+            case 3: {
+                cout << "Ka naudoti galutinio balo skaiciavimui?\n";
+                cout << "1 - Vidurkis\n2 - Mediana\n3 - Abu\n";
+                int pasirinkimas;
+                cout << "Pasirinkimas: ";
+                cin >> pasirinkimas;
+                rodytiRezultatus(s, pasirinkimas);
                 break;
             }
-            int balas = stoi(eilute);
-            s[i].nd.push_back(balas);
-            sum += balas;
+            case 0:
+                cout << "Darbas baigtas.\n";
+                break;
+            default:
+                cout << "Bandykite dar karta.\n";
         }
-        apskaiciuotiGalutini(s[i]);
-    }
-    cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde";
-    if (pasirinkimas == 1) {
-        cout << "galutinis (Vid.)";
-    } else if (pasirinkimas == 2) {
-        cout << "Galutinis (Med.)";
-    } else {
-        cout << "Galutinis (Vid.)/ Galutinis (Med.)";
-    }
-    cout << "\n";
-    cout << "--------------------------------------------------------\n";
-    cout << fixed << setprecision(2);
-    for(int i=0;i<studSk;i++) {
-        cout << left << setw(10) << s[i].vardas << setw(10) << s[i].pavarde;
-        if(pasirinkimas == 1) {
-            cout << s[i].galutinisVid;
-        } else if (pasirinkimas == 2) {
-            cout << s[i].galutinisMed;
-        } else {
-            cout << left << setw(20) << s[i].galutinisVid << s[i].galutinisMed;
-        }
-        cout << "\n";
-    }
+    } while (pasirink != 0);
     return 0;
 }
