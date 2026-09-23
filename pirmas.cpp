@@ -20,6 +20,13 @@ int main()
     int studSk;
     cout << "Studentu skaičius: ";
     cin >> studSk;
+    cout << "Pasirinkite ką naudoti galutinio balo skaičiavimui?\n";
+    cout << "1 - Vidurkis\n";
+    cout << "2 - Mediana\n";
+    cout << "3 - Abu\n";
+    int pasirinkimas;
+    cout << "Pasirinkimas: ";
+    cin >> pasirinkimas;
     studentas s[100];
     for(int i=0;i<studSk;i++) {
         cout << "\n" << (i+1) << "-as studentas\n";
@@ -52,11 +59,27 @@ int main()
         s[i].galutinisVid=0.4*vidurkis+0.6*s[i].egz;
         s[i].galutinisMed=0.4*mediana+0.6*s[i].egz;
     }
-    cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde" << setw(15) << "Galutinis (Vid.)/ Galutinis (Med.)\n";
+    cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde";
+    if (pasirinkimas == 1) {
+        cout << "galutinis (Vid.)";
+    } else if (pasirinkimas == 2) {
+        cout << "Galutinis (Med.)";
+    } else {
+        cout << "Galutinis (Vid.)/ Galutinis (Med.)";
+    }
+    cout << "\n";
     cout << "--------------------------------------------------------\n";
     cout << fixed << setprecision(2);
     for(int i=0;i<studSk;i++) {
-        cout << left << setw(10) << s[i].vardas << setw(10) << s[i].pavarde << setw(5) << s[i].galutinisVid << "             " << s[i].galutinisMed << "\n";
+        cout << left << setw(10) << s[i].vardas << setw(10) << s[i].pavarde;
+        if(pasirinkimas == 1) {
+            cout << s[i].galutinisVid;
+        } else if (pasirinkimas == 2) {
+            cout << s[i].galutinisMed;
+        } else {
+            cout << left << setw(20) << s[i].galutinisVid << s[i].galutinisMed;
+        }
+        cout << "\n";
     }
     return 0;
 }
