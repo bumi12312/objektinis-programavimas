@@ -32,6 +32,38 @@ void apskaiciuotiGalutini(studentas &s) {
     s.galutinisVid = 0.4*vidurkis + 0.6*s.egz;
     s.galutinisMed = 0.4*mediana + 0.6*s.egz;
 }
+void ivestiRankiniu(vector<studentas> &s) {
+    int studSk;
+    cout << "Studentu skaičius: ";
+    cin >> studSk;
+    cin.ignore();
+
+    for (int i = 0; i < studSk; i++) {
+        studentas stud;
+        cout << "\n" << (i+1) << "-as studentas\n";
+        cout << "Vardas: ";
+        cin >> stud.vardas;
+        cout << "Pavarde: ";
+        cin >> stud.pavarde;
+        cin.ignore();
+
+        cout << "Namu darbu balai (palikti tuscia, kad baigit):\n";
+        while (true) {
+            string eilute;
+            getline(cin, eilute);
+            if (eilute.empty()) break;
+            int balas = stoi(eilute);
+            stud.nd.push_back(balas);
+        }
+
+        cout << "Egzamino rezultatas: ";
+        cin >> stud.egz;
+        cin.ignore();
+
+        apskaiciuotiGalutini(stud);
+        s.push_back(stud);
+    }
+}
 int main()
 {
     srand((unsigned)time(0));
@@ -67,21 +99,7 @@ int main()
             s[i].nd.push_back(balas);
             sum += balas;
         }
-        double vidurkis = (double)sum / s[i].nd.size();
-        vector<int> nd2 = s[i].nd;
-        sort(nd2.begin(), nd2.end());
-        int n = nd2.size();
-        float mediana;
-        if (n % 2 == 1) {
-            mediana = nd2[n/2];
-        } else {
-            mediana = (nd2[n/2 - 1] + nd2[n/2]) / 2.0;
-        }
-        cout << "Egzamino rezultatas: ";
-        cin >> s[i].egz;
-        cin.ignore();
-        s[i].galutinisVid = 0.4*vidurkis + 0.6*s[i].egz;
-        s[i].galutinisMed = 0.4*mediana + 0.6*s[i].egz;
+        apskaiciuotiGalutini(s[i]);
     }
     cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde";
     if (pasirinkimas == 1) {
