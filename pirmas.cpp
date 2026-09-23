@@ -2,14 +2,14 @@
 #include <iomanip>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
 struct studentas {
     string vardas = "";
     string pavarde = "";
-    int n = 0;
-    int nd[5];
+    vector<int> nd;
     int egz = 0;
     float galutinisVid = 0;
     float galutinisMed = 0;
@@ -27,37 +27,43 @@ int main()
     int pasirinkimas;
     cout << "Pasirinkimas: ";
     cin >> pasirinkimas;
-    studentas s[100];
+    cin.ignore();
+    
+    vector<studentas> s(studSk);
     for(int i=0;i<studSk;i++) {
         cout << "\n" << (i+1) << "-as studentas\n";
         cout << "Vardas: ";
         cin >> s[i].vardas;
         cout << "Pavarde: ";
         cin >> s[i].pavarde;
-        cout << "Namu darbu kiekis: ";
-        cin >> s[i].n;
-        int sum=0;
-        for(int j=0;j<s[i].n;j++) {
-            cout << (j+1) << " namu darbo balas: ";
-            cin >> s[i].nd[j];
-            sum += s[i].nd[j];
+        cin.ignore();
+        cout << "Namu darbu balai (palikti tuscia, kad baigit):\n";
+        int sum = 0;
+        while (true) {
+            string eilute;
+            getline(cin, eilute);
+            if (eilute.empty()) {
+                break;
+            }
+            int balas = stoi(eilute);
+            s[i].nd.push_back(balas);
+            sum += balas;
         }
-        double vidurkis=(double)sum/s[i].n;
-        int nd2[5];
-        for(int j=0;j<s[i].n;j++) {
-            nd2[j]=s[i].nd[j];
-        }
-        sort(nd2,nd2+s[i].n);
+        double vidurkis = (double)sum / s[i].nd.size();
+        vector<int> nd2 = s[i].nd;
+        sort(nd2.begin(), nd2.end());
+        int n = nd2.size();
         float mediana;
-        if(s[i].n%2==1) {
-            mediana=nd2[s[i].n/2];
+        if (n % 2 == 1) {
+            mediana = nd2[n/2];
         } else {
-            mediana=(nd2[s[i].n/2-1] + nd2[s[i].n/2]) /2;
+            mediana = (nd2[n/2 - 1] + nd2[n/2]) / 2.0;
         }
         cout << "Egzamino rezultatas: ";
         cin >> s[i].egz;
-        s[i].galutinisVid=0.4*vidurkis+0.6*s[i].egz;
-        s[i].galutinisMed=0.4*mediana+0.6*s[i].egz;
+        cin.ignore();
+        s[i].galutinisVid = 0.4*vidurkis + 0.6*s[i].egz;
+        s[i].galutinisMed = 0.4*mediana + 0.6*s[i].egz;
     }
     cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde";
     if (pasirinkimas == 1) {
