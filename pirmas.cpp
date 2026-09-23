@@ -7,7 +7,7 @@ using namespace std;
 struct studentas {
     string vardas = "";
     string pavarde = "";
-    int nd = 0;
+    int n = 0;
     int egz = 0;
     float galutinis = 0;
 };
