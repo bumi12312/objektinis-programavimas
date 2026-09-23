@@ -123,6 +123,11 @@ void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
         cout << "Duomenu nera - ivesk arba sugeneruok duomenis.\n";
         return;
     }
+    vector<studentas> rusiavimas = s;
+    sort(rusiavimas.begin(),rusiavimas.end(),
+        [](const studentas &a, const studentas &b) {
+            return a.pavarde < b.pavarde;
+        });
     cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde";
     if (pasirinkimas == 1) {
         cout << "Galutinis (Vid.)";
