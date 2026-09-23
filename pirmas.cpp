@@ -37,7 +37,6 @@ void ivestiRankiniu(vector<studentas> &s) {
     cout << "Studentu skaičius: ";
     cin >> studSk;
     cin.ignore();
-
     for (int i = 0; i < studSk; i++) {
         studentas stud;
         cout << "\n" << (i+1) << "-as studentas\n";
@@ -46,7 +45,6 @@ void ivestiRankiniu(vector<studentas> &s) {
         cout << "Pavarde: ";
         cin >> stud.pavarde;
         cin.ignore();
-
         cout << "Namu darbu balai (palikti tuscia, kad baigit):\n";
         while (true) {
             string eilute;
@@ -55,13 +53,64 @@ void ivestiRankiniu(vector<studentas> &s) {
             int balas = stoi(eilute);
             stud.nd.push_back(balas);
         }
-
         cout << "Egzamino rezultatas: ";
         cin >> stud.egz;
         cin.ignore();
-
         apskaiciuotiGalutini(stud);
         s.push_back(stud);
+    }
+}
+void generuotiAtsitiktinai(vector<studentas> &s) {
+    int studSk;
+    cout << "Studentu skaičius: ";
+    cin >> studSk;
+    cin.ignore();
+    for (int i = 0; i < studSk; i++) {
+        studentas stud;
+        cout << "\n" << (i+1) << "-as studentas\n";
+        cout << "Vardas: ";
+        cin >> stud.vardas;
+        cout << "Pavarde: ";
+        cin >> stud.pavarde;
+        cin.ignore();
+        int nDarbu = rand() % 5 + 3;
+        for (int j = 0; j < nDarbu; j++) {
+            stud.nd.push_back(rand() % 10 + 1);
+        }
+        stud.egz = rand() % 10 + 1;
+        cout << "Sugeneruoti namu darbu balai: ";
+        for (int balas : stud.nd) cout << balas << " ";
+        cout << "\nSugeneruotas egzamino balas: " << stud.egz << "\n";
+        apskaiciuotiGalutini(stud);
+        s.push_back(stud);
+    }
+}
+void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
+    if (s.empty()) {
+        cout << "Duomenu nera - pirmiausiai ivesk arba sugeneruok duomenis.\n";
+        return;
+    }
+    cout << "\n" << left << setw(10) << "Vardas" << setw(10) << "Pavarde";
+    if (pasirinkimas == 1) {
+        cout << "Galutinis (Vid.)";
+    } else if (pasirinkimas == 2) {
+        cout << "Galutinis (Med.)";
+    } else {
+        cout << "Galutinis (Vid.)/ Galutinis (Med.)";
+    }
+    cout << "\n";
+    cout << "--------------------------------------------------------\n";
+    cout << fixed << setprecision(2);
+    for (const auto &stud : s) {
+        cout << left << setw(10) << stud.vardas << setw(10) << stud.pavarde;
+        if (pasirinkimas == 1) {
+            cout << stud.galutinisVid;
+        } else if (pasirinkimas == 2) {
+            cout << stud.galutinisMed;
+        } else {
+            cout << left << setw(20) << stud.galutinisVid << stud.galutinisMed;
+        }
+        cout << "\n";
     }
 }
 int main()
