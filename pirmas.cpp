@@ -29,7 +29,7 @@ int main()
         cin >> s[i].n;
         int sum=0;
         for(int j=0;j<s[i].n;j++) {
-            cout << (j+1) << "namu darbo balas: ";
+            cout << (j+1) << " namu darbo balas: ";
             cin >> s[i].nd[j];
             sum += s[i].nd[j];
         }
