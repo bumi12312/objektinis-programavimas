@@ -23,4 +23,13 @@ int main()
         cout << "\n" << (i+1) << "-as studentas\n";
         cout << "Vardas: ";
         cin >> s[i].vardas;
-    
+        cout << "Pavarde: ";
+        cin >> s[i].pavarde;
+        cout << "Namu darbu kiekis: ";
+        cin >> s[i].n;
+        int sum=0;
+        for(int j=0;j<s[i].n;j++) {
+            cout << (j+1) << "namu darbo balas: ";
+            cin >> s[i].nd[j];
+            suma += s[i].nd[j];
+        }
