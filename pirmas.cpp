@@ -140,13 +140,13 @@ void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
     cout << "--------------------------------------------------------\n";
     cout << fixed << setprecision(2);
     for (const auto &stud : s) {
-        cout << left << setw(10) << stud.vardas << setw(10) << stud.pavarde;
+        cout << left << setw(16) << stud.vardas << setw(16) << stud.pavarde;
         if (pasirinkimas == 1) {
             cout << stud.galutinisVid;
         } else if (pasirinkimas == 2) {
             cout << stud.galutinisMed;
         } else {
-            cout << left << setw(20) << stud.galutinisVid << stud.galutinisMed;
+            cout << left << setw(24) << stud.galutinisVid << stud.galutinisMed;
         }
         cout << "\n";
     }
