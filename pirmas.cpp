@@ -20,13 +20,14 @@ struct studentas {
     float galutinisMed = 0;
 };
 void apskaiciuotiGalutini(studentas &s) {
+    if (s.nd.empty()) {
+        s.galutinisVid = 0.6 * s.egz;
+        s.galutinisMed = 0.6 * s.egz;
+        return;
+    }
     int sum = 0;
     for (int balas : s.nd) sum += balas;
-    if (s.nd.empty()) {
-    s.galutinisVid = 0.6 * s.egz;
-    s.galutinisMed = 0.6 * s.egz;
-    return;
-    }   
+    double vidurkis = (double)sum / s.nd.size();
     vector<int> nd2 = s.nd;
     sort(nd2.begin(), nd2.end());
     int n = nd2.size();
@@ -123,6 +124,26 @@ void generuotiAtsitiktinai(vector<studentas> &s) {
         s.push_back(stud);
     }
 }
+void generuotiFaila(int kiekis) {
+    ofstream out("studentai" + to_string(kiekis) + ".txt");
+    out << "Vardas Pavarde ND1 ND2 ND3 ND4 ND5 Egz.\n";
+    for (int i = 1; i <= kiekis; i++) {
+        out << "Vardas" << i << " Pavarde" << i;
+        for (int j = 0; j < 6; j++) {
+            out << " " << rand() % 10 + 1;
+        }
+        out << "\n";
+    }
+    out.close();
+    cout << "Sukurtas failas su " << kiekis << " irasu.\n";
+}
+void generuotiVisusFailus() {
+    generuotiFaila(1000);
+    generuotiFaila(10000);
+    generuotiFaila(100000);
+    generuotiFaila(1000000);
+    generuotiFaila(10000000);
+}
 void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
     if (s.empty()) {
         cout << "Duomenu nera - ivesk arba sugeneruok duomenis.\n";
@@ -167,6 +188,7 @@ int main()
         cout << "2 - Generuoti studentu duomenis\n";
         cout << "3 - Duomenu nuskaitymas is failo\n";
         cout << "4 - Rodyti rezultatus\n";
+        cout << "5 - Sugeneruoti penkis studentu sarasu failus\n";
         cout << "0 - Baigti darba\n";
         cout << "Pasirinkimas: ";
         cin >> pasirink;
@@ -189,6 +211,9 @@ int main()
                 rodytiRezultatus(s, pasirinkimas);
                 break;
             }
+            case 5:
+                generuotiVisusFailus();
+                break;
             case 0:
                 cout << "Darbas baigtas.\n";
                 break;
