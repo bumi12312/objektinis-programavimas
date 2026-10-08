@@ -177,6 +177,44 @@ void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
         cout << "\n";
     }
 }
+void dalintiStudentus(const vector<studentas> &s,
+                      vector<studentas> &vargsiukai,
+                      vector<studentas> &kietiakiai) {
+    for (const auto &stud : s) {
+        if (stud.galutinisVid < 5.0)
+            vargsiukai.push_back(stud);
+        else
+            kietiakiai.push_back(stud);
+    }
+}
+void irasytiIFaila(const vector<studentas> &v, const string &pavadinimas) {
+    ofstream out(pavadinimas);
+    out << fixed << setprecision(2);
+    out << left << setw(20) << "Vardas" << setw(20) << "Pavarde" << "Galutinis (Vid.)\n";
+    for (const auto &stud : v) {
+        out << left << setw(20) << stud.vardas << setw(20) << stud.pavarde
+            << stud.galutinisVid << "\n";
+    }
+    out.close();
+}
+void kategorijos(const vector<studentas> &s) {
+    if (s.empty()) {
+        cout << "Duomenu nera - pirma nuskaityk arba sugeneruok duomenis.\n";
+        return;
+    }
+    vector<studentas> vargsiukai, kietiakiai;
+    dalintiStudentus(s, vargsiukai, kietiakiai);
+    auto pagalBala = [](const studentas &a, const studentas &b) {
+        return a.galutinisVid < b.galutinisVid;
+    };
+    sort(vargsiukai.begin(), vargsiukai.end(), pagalBala);
+    sort(kietiakiai.begin(), kietiakiai.end(), pagalBala);
+    irasytiIFaila(vargsiukai, "vargsiukai.txt");
+    irasytiIFaila(kietiakiai, "kietiakiai.txt");
+    cout << "Vargsiukai (< 5.0): " << vargsiukai.size() << "\n";
+    cout << "Kietiakiai (>= 5.0): " << kietiakiai.size() << "\n";
+    cout << "Rezultatai irasyti i vargsiukai.txt ir kietiakiai.txt\n";
+}
 int main()
 {
     srand((unsigned)time(0));
@@ -189,6 +227,7 @@ int main()
         cout << "3 - Duomenu nuskaitymas is failo\n";
         cout << "4 - Rodyti rezultatus\n";
         cout << "5 - Sugeneruoti penkis studentu sarasu failus\n";
+        cout << "6 - Padalinti studentus i kategorijas\n";
         cout << "0 - Baigti darba\n";
         cout << "Pasirinkimas: ";
         cin >> pasirink;
@@ -213,6 +252,9 @@ int main()
             }
             case 5:
                 generuotiVisusFailus();
+                break;
+            case 6:
+                kategorijos(s);
                 break;
             case 0:
                 cout << "Darbas baigtas.\n";
