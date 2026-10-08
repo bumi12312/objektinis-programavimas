@@ -1,0 +1,18 @@
+Failus sugeneravo gana greitai ir didėjo priklausomai nuo kiekio. Pavyzdžiui jeigu faile įrašų 10 kartų daugiau,
+tai ir generavimo laikas 10 kartų ilgesnis.
+
+Sukurtas failas su 1000 irasu per 0.002604 s.
+Sukurtas failas su 10000 irasu per 0.0051326 s.
+Sukurtas failas su 100000 irasu per 0.0323453 s.
+Sukurtas failas su 1000000 irasu per 0.32815 s.
+Sukurtas failas su 10000000 irasu per 3.1352 s.
+
+Nuskaitymas užtrunka ilgiausiai, o antroj vietoj rūšiavimas. Bendras programos veiksmingumas palyginus visai greitas.
+
+Irasu       Nuskaitymas   Dalinimas     Rusiavimas    Isvedimas     Viso (s)
+--------------------------------------------------------------------------------
+1000        0.0014        0.0002        0.0003        0.0028        0.0047
+10000       0.0122        0.0019        0.0042        0.0079        0.0261
+100000      0.1183        0.0136        0.0445        0.0609        0.2373
+1000000     1.1275        0.1536        0.6309        0.5427        2.4547
+10000000    14.1497       1.9861        8.2115        8.6248        32.9721
