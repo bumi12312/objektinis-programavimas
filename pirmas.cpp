@@ -7,6 +7,7 @@
 #include <ctime>
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 using namespace std;
 
@@ -21,7 +22,11 @@ struct studentas {
 void apskaiciuotiGalutini(studentas &s) {
     int sum = 0;
     for (int balas : s.nd) sum += balas;
-    double vidurkis = (double)sum / s.nd.size();    
+    if (s.nd.empty()) {
+    s.galutinisVid = 0.6 * s.egz;
+    s.galutinisMed = 0.6 * s.egz;
+    return;
+    }   
     vector<int> nd2 = s.nd;
     sort(nd2.begin(), nd2.end());
     int n = nd2.size();
@@ -139,7 +144,7 @@ void rodytiRezultatus(const vector<studentas> &s, int pasirinkimas) {
     cout << "\n";
     cout << "--------------------------------------------------------\n";
     cout << fixed << setprecision(2);
-    for (const auto &stud : s) {
+    for (const auto &stud : rusiavimas) {
         cout << left << setw(16) << stud.vardas << setw(16) << stud.pavarde;
         if (pasirinkimas == 1) {
             cout << stud.galutinisVid;
