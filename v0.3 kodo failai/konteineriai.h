@@ -65,5 +65,51 @@ void rasytiKonteineri(const C &v, const std::string &pavadinimas) {
             << stud.galutinisVid << "\n";
     }
 }
-
+// 5) Rankinis ivedimas bet kokiam konteineriui + objekto adresas atmintyje
+template <typename C>
+void ivestiRankiniuSuAdresais(C &s) {
+    using namespace std;
+    int studSk;
+    cout << "Studentu skaicius: ";
+    cin >> studSk;
+    cin.ignore();
+    for (int i = 0; i < studSk; i++) {
+        studentas stud;
+        cout << "\n" << (i + 1) << "-as studentas\n";
+        cout << "Vardas: ";
+        cin >> stud.vardas;
+        cout << "Pavarde: ";
+        cin >> stud.pavarde;
+        cin.ignore();
+        cout << "Namu darbu balai (palikti tuscia, kad baigti):\n";
+        while (true) {
+            string eilute;
+            getline(cin, eilute);
+            if (eilute.empty()) break;
+            try {
+                stud.nd.push_back(stoi(eilute));
+            } catch (const exception &) {
+                cout << "Neteisinga reiksme, bandykite dar karta.\n";
+            }
+        }
+        cout << "Egzamino rezultatas: ";
+        cin >> stud.egz;
+        cin.ignore();
+        apskaiciuotiGalutini(stud);
+        s.push_back(std::move(stud));
+        cout << "Objekto adresas atmintyje: " << static_cast<const void *>(&s.back()) << "\n";
+    }
+}
+template <typename C>
+void rodytiSuAdresais(const C &s) {
+    using namespace std;
+    cout << "\n" << left << setw(16) << "Vardas" << setw(16) << "Pavarde"
+         << setw(12) << "Galutinis" << "Adresas\n";
+    cout << string(60, '-') << "\n" << fixed << setprecision(2);
+    for (const auto &stud : s) {
+        cout << left << setw(16) << stud.vardas << setw(16) << stud.pavarde
+             << setw(12) << stud.galutinisVid
+             << static_cast<const void *>(&stud) << "\n";
+    }
+}
 #endif
