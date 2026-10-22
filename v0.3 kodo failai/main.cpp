@@ -1,15 +1,14 @@
-#include "analize.h"
-#include "testas.h"
 #include <iostream>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
-
 #include "studentas.h"
 #include "ivestis.h"
 #include "isvestis.h"
 #include "generavimas.h"
 #include "kategorijos.h"
+#include "analize.h"
+#include "testas.h"
 
 using namespace std;
 
