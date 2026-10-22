@@ -1,4 +1,5 @@
 #include "analize.h"
+#include "testas.h"
 #include <iostream>
 #include <vector>
 #include <cstdlib>
@@ -26,6 +27,7 @@ int main()
         cout << "5 - Sugeneruoti 5 studentu sarasu failus\n";
         cout << "6 - Padalinti studentus i kategorijas\n";
         cout << "7 - Spartos analize\n";
+        cout << "8 - Konteineriu testavimas (vector vs list)\n";
         cout << "0 - Baigti darba\n";
         cout << "Pasirinkimas: ";
         cin >> pasirink;
@@ -57,6 +59,9 @@ int main()
             case 7:
                 spartosAnalize();
                 break;
+            case 8:
+                testuotiKonteinerius();
+                break;     
             case 0:
                 cout << "Darbas baigtas.\n";
                 break;
