@@ -12,12 +12,13 @@ Matuojami žingsniai: nuskaitymas iš failo, dalijimas į dvi grupes (`< 5.0` ir
 
 ## Failų kūrimo laikas
 
-Įrašų skaičius	Laikas (s)
-1 000	0.0019453
-10 000	0.0033588
-100 000	0.0287056
-1 000 000	0.304699
-10 000 000	3.38117
+| Įrašų skaičius | Laikas (s) | 
+|----------------|------------| 
+| 1000 | 0.0019453 |
+| 10000 | 0.0033588 | 
+| 100000 | 0.0287056 | 
+| 1000000 | 0.304699 | 
+| 10000000 | 3.38117 |
 
 ## std::vector
 
