@@ -27,6 +27,7 @@ int main()
         cout << "6 - Padalinti studentus i kategorijas\n";
         cout << "7 - Spartos analize\n";
         cout << "8 - Konteineriu testavimas (vector vs list)\n";
+        cout << "9 - Rankinis ivedimas su adresais (vector arba list)\n";
         cout << "0 - Baigti darba\n";
         cout << "Pasirinkimas: ";
         cin >> pasirink;
@@ -60,7 +61,10 @@ int main()
                 break;
             case 8:
                 testuotiKonteinerius();
-                break;     
+                break;
+            case 9:
+                rankinisSuAdresais();
+                break;
             case 0:
                 cout << "Darbas baigtas.\n";
                 break;
