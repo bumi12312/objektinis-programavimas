@@ -1,4 +1,4 @@
-<img width="2863" height="2268" alt="image" src="https://github.com/user-attachments/assets/d7a543e6-547b-4ea5-b976-782456b10c15" /># Studentų galutinio balo skaičiavimas (v0.3)
+# Studentų galutinio balo skaičiavimas (v0.3)
 
 ## Testavimo sistema
 - CPU: CPU Intel(R) Core(TM) Ultra 7 258V
