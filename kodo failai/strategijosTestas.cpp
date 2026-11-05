@@ -2,11 +2,11 @@
 #include "strategijos.h"
 #include "konteineriai.h"
 #include "timer.h"
-#include "lentele.h"
 #include <climits>
 #include <functional>
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -21,15 +21,50 @@ template <typename C>
 struct Strategija {
     string pavadinimas;
     function<void(C &, C &, C &)> vykdyti;
-    int maxIrasu;  
+    int maxIrasu;
 };
 
 template <typename C>
 struct Rezultatai {
-    vector<vector<double>> laikai;  
-    vector<vector<size_t>> objektai; 
+    vector<vector<double>> laikai;
+    vector<vector<size_t>> objektai;
 };
 
+string skaicius(double v, int tikslumas) {
+    ostringstream ss;
+    ss << fixed << setprecision(tikslumas) << v;
+    return ss.str();
+}
+
+void rodytiLentele(const string &pavadinimas, const vector<string> &antrastes,
+                   const vector<vector<string>> &eilutes) {
+    size_t n = antrastes.size();
+    vector<size_t> plotis(n);
+    for (size_t i = 0; i < n; i++) plotis[i] = antrastes[i].size();
+    for (const auto &e : eilutes)
+        for (size_t i = 0; i < n && i < e.size(); i++) plotis[i] = max(plotis[i], e[i].size());
+
+    size_t viso = 3 * (n - 1);
+    for (size_t i = 0; i < n; i++) viso += plotis[i];
+    string dviguba(viso, '='), vienguba(viso, '-');
+
+    auto eilute = [&](const vector<string> &e) {
+        for (size_t i = 0; i < n; i++) {
+            cout << left << setw(plotis[i]) << (i < e.size() ? e[i] : "");
+            if (i + 1 < n) cout << " | ";
+        }
+        cout << "\n";
+    };
+
+    cout << "\n" << dviguba << "\n" << pavadinimas << "\n" << dviguba << "\n";
+    eilute(antrastes);
+    cout << dviguba << "\n";
+    for (const auto &e : eilutes) {
+        eilute(e);
+        cout << vienguba << "\n";
+    }
+    cout << flush;
+}
 
 template <typename C>
 void matuotiDydi(const C &baze, int n, const vector<Strategija<C>> &strategijos,
@@ -46,7 +81,7 @@ void matuotiDydi(const C &baze, int n, const vector<Strategija<C>> &strategijos,
         double suma = 0;
         size_t obj = 0;
         for (int b = 0; b < BANDYMU; b++) {
-            C s = baze;               
+            C s = baze;               // kopijavimas nematuojamas
             C vargsiukai, kietiakiai;
             Timer t;
             st.vykdyti(s, vargsiukai, kietiakiai);
@@ -63,42 +98,41 @@ void matuotiDydi(const C &baze, int n, const vector<Strategija<C>> &strategijos,
 }
 
 template <typename C>
-void spausdintiLentele(const string &pavadinimas, const vector<Strategija<C>> &strategijos,
-                       const Rezultatai<C> &rez) {
-    Lentele lent;
-    lent.pavadinimas = pavadinimas + " - dalijimo laikas (s, " + to_string(BANDYMU) +
-                       " bandymu vidurkis)";
-    lent.antrastes.push_back("Irasu sk.");
-    for (const auto &st : strategijos) lent.antrastes.push_back(st.pavadinimas);
-    for (size_t i = 0; i < rez.laikai.size(); i++) {
-        vector<string> eilute;
-        eilute.push_back(to_string(DYDZIAI[i]));
-        for (double l : rez.laikai[i]) eilute.push_back(l < 0 ? "praleista" : skaicius(l, 6));
-        lent.eilutes.push_back(eilute);
-    }
-    lent.spausdinti();
-}
+void spausdintiLaikus(const string &pavadinimas, const vector<Strategija<C>> &strategijos,
+                      const Rezultatai<C> &rez) {
+    vector<string> antrastes;
+    antrastes.push_back("Irasu sk.");
+    for (const auto &st : strategijos) antrastes.push_back(st.pavadinimas);
 
+    vector<vector<string>> eilutes;
+    for (size_t i = 0; i < rez.laikai.size(); i++) {
+        vector<string> e;
+        e.push_back(to_string(DYDZIAI[i]));
+        for (double l : rez.laikai[i]) e.push_back(l < 0 ? "praleista" : skaicius(l, 6));
+        eilutes.push_back(e);
+    }
+    rodytiLentele(pavadinimas + " - dalijimo laikas (s, " + to_string(BANDYMU) +
+                  " bandymu vidurkis)", antrastes, eilutes);
+}
 
 template <typename C>
 void spausdintiAtminti(const string &pavadinimas, size_t baitaiVienam, const Rezultatai<C> &rez) {
-    Lentele lent;
-    lent.pavadinimas = pavadinimas + " - atmintis po dalijimo (apytiksl.)";
-    lent.antrastes = {"Irasu sk.", "1 strat. objektu", "2/3 strat. objektu",
-                      "1 strat. MB", "2/3 strat. MB", "Kartu daugiau (1 strat.)"};
+    vector<string> antrastes = {"Irasu sk.", "1 strat. objektu", "2/3 strat. objektu",
+                                "1 strat. MB", "2/3 strat. MB", "Kartu daugiau (1 strat.)"};
+    vector<vector<string>> eilutes;
     for (size_t i = 0; i < rez.objektai.size(); i++) {
         size_t o1 = rez.objektai[i].front();
         size_t o3 = rez.objektai[i].back();
-        vector<string> eilute;
-        eilute.push_back(to_string(DYDZIAI[i]));
-        eilute.push_back(to_string(o1));
-        eilute.push_back(to_string(o3));
-        eilute.push_back(skaicius(o1 * baitaiVienam / 1048576.0, 1));
-        eilute.push_back(skaicius(o3 * baitaiVienam / 1048576.0, 1));
-        eilute.push_back(skaicius((double)o1 / o3, 2));
-        lent.eilutes.push_back(eilute);
+        vector<string> e;
+        e.push_back(to_string(DYDZIAI[i]));
+        e.push_back(to_string(o1));
+        e.push_back(to_string(o3));
+        e.push_back(skaicius(o1 * baitaiVienam / 1048576.0, 1));
+        e.push_back(skaicius(o3 * baitaiVienam / 1048576.0, 1));
+        e.push_back(skaicius((double)o1 / o3, 2));
+        eilutes.push_back(e);
     }
-    lent.spausdinti();
+    rodytiLentele(pavadinimas + " - atmintis po dalijimo (apytiksl.)", antrastes, eilutes);
 }
 
 void palygintiStrategijas() {
@@ -130,9 +164,9 @@ void palygintiStrategijas() {
         matuotiDydi(bazeList, n, sarStr, sarRez);
     }
 
-    spausdintiLentele("std::vector", vekStr, vekRez);
-    spausdintiLentele("std::list", sarStr, sarRez);
+    spausdintiLaikus("std::vector", vekStr, vekRez);
+    spausdintiLaikus("std::list", sarStr, sarRez);
     spausdintiAtminti("std::vector", sizeof(studentas) + 5 * sizeof(int), vekRez);
     spausdintiAtminti("std::list", sizeof(studentas) + 5 * sizeof(int) + 2 * sizeof(void *), sarRez);
-    cout << "\nLaikai sekundemis. Lenteles galima kopijuoti i README.md.\n";
+    cout << "\nLaikai sekundemis.\n";
 }
