@@ -1,4 +1,4 @@
-#include "strategijos_testas.h"
+#include "strategijosTestas.h"
 #include "strategijos.h"
 #include "konteineriai.h"
 #include "timer.h"
