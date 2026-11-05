@@ -9,6 +9,7 @@
 #include "kategorijos.h"
 #include "analize.h"
 #include "testas.h"
+#include "strategijosTestas.h"
 
 using namespace std;
 
@@ -28,6 +29,7 @@ int main()
         cout << "7 - Spartos analize\n";
         cout << "8 - Konteineriu testavimas (vector vs list)\n";
         cout << "9 - Rankinis ivedimas su adresais (vector arba list)\n";
+        cout << "10 - Dalijimo strategiju palyginimas\n";
         cout << "0 - Baigti darba\n";
         cout << "Pasirinkimas: ";
         cin >> pasirink;
@@ -64,6 +66,9 @@ int main()
                 break;
             case 9:
                 rankinisSuAdresais();
+                break;
+            case 10:
+                palygintiStrategijas();
                 break;
             case 0:
                 cout << "Darbas baigtas.\n";
