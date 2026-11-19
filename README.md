@@ -4,8 +4,6 @@ Programa skirta studentų galutiniams balams apskaičiuoti pagal namų darbų (v
 
 ---
 
-## Įdėgimo instrukcija
-
 ## Diegimo ir paleidimo instrukcija
 
 1. **Atsisiųskite projektą:** atsisiųskite `.zip` archyvą iš GitHub ir išarchyvuokite jį į pasirinktą aplanką.
