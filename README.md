@@ -1,48 +1,149 @@
-# Studentų galutinio balo skaičiavimas (v0.3)
+# 1-oji užduotis (C++)
 
-## Testavimo sistema
+Programa skirta studentų galutiniams balams apskaičiuoti pagal namų darbų (vidurkį arba medianą) ir egzamino rezultatus, duomenims surūšiuoti, suskirstyti į dvi kategorijas (`< 5.0` ir `>= 5.0`) bei `std::vector` ir `std::list` konteinerių ir skirstymo strategijų spartai tirti.
+
+---
+
+## Pagrindinės programos funkcijos
+
+* **Duomenų įvestis ir generavimas:** rankinis duomenų įvedimas, atsitiktinis studentų generavimas, duomenų nuskaitymas iš failo bei 5 testinių failų (`1 000` – `10 000 000` įrašų) generavimas.
+* **Galutinio balo skaičiavimas:** naudojama formulė {Galutinis} = 0.4*{ND} + 0.6*{Egzaminas} (pasirenkant ND vidurkį arba medianą).
+* **Kategorizavimas ir rūšiavimas:** studentų skirstymas į dvi grupes (`< 5.0` ir `>= 5.0`), rūšiavimas pagal vardą, pavardę arba galutinį balą bei išvedimas į ekraną ar atskirus failus.
+* **Konteinerių ir atminties tyrimas:** `std::vector` ir `std::list` operacijų laiko palyginimas (3 bandymų vidurkis), objektų adresų atmintyje stebėjimas bei 3 skirstymo strategijų efektyvumo analizė.
+
+---
+
+## Versijų istorija (Releases)
+
+* **v0.1** – Pradinė programos versija: rankinis duomenų įvedimas, atsitiktinis pažymių generavimas, galutinio balo skaičiavimas pagal vidurkį ir medianą, rezultatų išvedimas terminale.
+* **v0.2** – Pridėtas duomenų nuskaitymas iš failų, 5 testinių failų (`1000`–`10000000` įrašų) generavimas, studentų skirstymas į dvi kategorijas (`< 5.0` ir `>= 5.0`) bei `std::vector` ir `std::list` spartos palyginimas.
+* **v0.3** – Programos kodas išskaidytas į modulinius `.h` ir `.cpp` failus, įdiegtas objektų adresų atmintyje atvaizdavimas bei realizuotos ir ištestuotos 3 studentų skirstymo strategijos (įskaitant STL algoritmus `copy_if` + `remove_if`, `partition`, `stable_partition` ir `std::list::splice`).
+
+---
+
+# Spartos analizė
+
+Testavimo sistema:
 - CPU: CPU Intel(R) Core(TM) Ultra 7 258V
 - RAM: 32 GB
 - Diskas: SSD (NVMe)
 - Kompiliatorius: GNU GCC, Release režimas
 
-## Matavimo metodika
-Laikas matuojamas su `std::chrono`. Kiekvienas testas paleistas 3 kartus, lentelėse pateiktas vidurkis (sekundėmis).
-Matuojami žingsniai: nuskaitymas iš failo, dalijimas į dvi grupes (`< 5.0` ir `>= 5.0`), rūšiavimas pagal galutinį balą, išvedimas į du failus.
+## Failų generavimas
 
-## Failų kūrimo laikas
+<img width="734" height="155" alt="image" src="https://github.com/user-attachments/assets/3b520f6d-243c-42fd-b445-d0c116619978" />
 
-| Įrašų skaičius | Laikas (s) | 
-|----------------|------------| 
-| 1000 | 0.0019453 |
-| 10000 | 0.0033588 | 
-| 100000 | 0.0287056 | 
-| 1000000 | 0.304699 | 
-| 10000000 | 3.38117 |
+## Failų testavimas (vector tipo konteineriai):
 
-## std::vector
+1000 įrašų:
 
-<img width="1302" height="348" alt="image" src="https://github.com/user-attachments/assets/a053b752-e1e0-4a3b-bf0b-619242a33039" />
+<img width="975" height="126" alt="image" src="https://github.com/user-attachments/assets/c76440d1-4094-4513-a449-7139a2fc214f" />
 
-## std::list
+10000 įrašų:
 
-<img width="1298" height="346" alt="image" src="https://github.com/user-attachments/assets/8cf81986-d0f6-4223-ba61-c6698dfbdc5f" />
+<img width="975" height="124" alt="image" src="https://github.com/user-attachments/assets/59f31542-dd6a-412f-9803-f6ef03c3fafc" />
 
-## std::vector adresai
+100000 įrašų:
 
-<img width="1172" height="282" alt="image" src="https://github.com/user-attachments/assets/56e5c0e9-30fa-49ca-abad-1b3195911998" />
+<img width="975" height="129" alt="image" src="https://github.com/user-attachments/assets/f2db36b8-77e8-4789-ab99-2c884cbcc155" />
 
-## std::list adresai
+1000000 įrašų:
 
-<img width="1170" height="296" alt="image" src="https://github.com/user-attachments/assets/8dea0bb5-656d-4e66-995d-ac004e1673d4" />
+<img width="975" height="120" alt="image" src="https://github.com/user-attachments/assets/ef6f9117-c669-40f1-8875-dfdd40f01d9f" />
 
-## Išvados
+10000000 įrašų:
 
-- **Bendra sparta.** `std::vector` yra greitesnis. Su 1 000 000 ir 10 000 000 įrašų `std::list` visą ciklą atlieka maždaug **1,5 karto lėčiau** (1,43 s prieš 2,15 s ir 18,15 s prieš 27,41 s). Mažiems failams (1 000 – 10 000) skirtumas nedaro reikšmingos įtakos, o išskirtinis `list` išvedimo laikas su 1 000 įrašų (0,0167 s) greičiausiai yra matavimo paklaida.
-- **Rūšiavimas yra pagrindinis skirtumas.** `list` rūšiavimas 3,8 karto lėtesnis su 1 mln. ir **5,1 karto lėtesnis** su 10 mln. įrašų. Su `list` rūšiavimas užima 42 % viso laiko, o su `vector` tik 13 %. Priežastis: `vector` elementai guli atmintyje vienas po kito (žr. adresus žemiau), todėl gerai išnaudojama procesoriaus talpykla. `list` mazgai išmėtyti, todėl kiekvienas elementas gali sukelti talpyklos nepataikymą. Be to, augant duomenų kiekiui skirtumas didėja (`vector` rūšiavimas 1 mln. → 10 mln. užtruko 14 kartų ilgiau, o `list` – 19 kartų).
-- **Nuskaitymas iš failo** abiem konteineriams beveik vienodas (10 mln. įrašų: 8,00 s ir 7,91 s). Didžiausią laiko dalį užima eilučių skaidymas (`istringstream`), todėl konteinerio pasirinkimas čia beveik nieko nekeičia. `vector` su 10 mln. įrašų buvo net šiek tiek lėtesnis tik dėl papildomų atminties perskyrimų.
-- **Išvedimas į failus** su 1 mln. įrašų `list` buvo 1,4 karto lėtesnis, bet su 10 mln. skirtumo nebeliko (6,94 s ir 7,17 s). Čia laiką lemia diskas ir formatavimas (`setw`, `ofstream`), o ne einimas per konteinerį. Su `vector` 10 mln. įrašų išvedimas ir nuskaitymas kartu užėmė 84 % laiko.
-- **Dalijimas į dvi grupes** užima nedidelę dalį laiko (~3–4 %). Su 1 mln. įrašų `list` buvo šiek tiek greitesnis (0,076 s prieš 0,081 s), o su 10 mln. – lėtesnis (0,92 s prieš 0,70 s). Taigi `list` pranašumo čia nepastebėjome, nes studentai perkeliami į naujus konteinerius, o ne šalinami iš pradinio.
-- **Atmintis.** Visi testai (iki 10 mln. įrašų) sėkmingai pavyko abiem konteineriams (32 GB RAM). Teoriškai `list` kiekvienam elementui papildomai naudoja dvi rodykles ir atskirą atminties alokaciją, todėl su dideliais duomenimis jis užimtų daugiau vietos (šioje užduotyje atminties sunaudojimas nematuotas).
-- **Adresai atmintyje.** `vector` elementų adresai eina iš eilės ir skiriasi po 104 baitus (`0x…cd10`, `0x…cd78`, `0x…cde0`), tai yra `sizeof(studentas)`. `list` mazgai nėra vienas šalia kito: antras mazgas yra toli nuo pirmo ir trečio (`0x…3b510`, `0x…58570`, `0x…3b590`), be to kiekvienas mazgas didesnis nei pats objektas, nes saugo rodykles.
-- **Bendra išvada.** Šiai užduočiai (įrašų nuskaitymas, rūšiavimas, perėjimas per visus elementus) geresnis pasirinkimas yra `std::vector`. `std::list` verta rinktis, kai dažnai reikia įterpti ar šalinti elementus sąrašo viduryje be perkėlimo, o šioje užduotyje to nedaroma.
+<img width="975" height="118" alt="image" src="https://github.com/user-attachments/assets/0ca02b6f-3509-4cef-88a6-0ab5bdcece52" />
+
+## Failų testavimas (list tipo konteineriai):
+
+1000 įrašų:
+
+<img width="975" height="128" alt="image" src="https://github.com/user-attachments/assets/2a7f0620-a9af-4bad-99cc-6261c3e7b4f1" />
+
+10000 įrašų:
+
+<img width="975" height="126" alt="image" src="https://github.com/user-attachments/assets/4b78a4bd-6c96-4343-a3e7-dc7a6eb3488d" />
+
+100000 įrašų:
+
+<img width="975" height="124" alt="image" src="https://github.com/user-attachments/assets/969dbfc9-8415-42ae-bddd-53a40a764a8d" />
+
+1000000 įrašų:
+
+<img width="975" height="123" alt="image" src="https://github.com/user-attachments/assets/ac2a6df7-3d72-4a6d-b585-be46863e916d" />
+
+10000000 įrašų:
+
+<img width="975" height="119" alt="image" src="https://github.com/user-attachments/assets/d421db65-c79c-4226-9fd0-19359895d4a8" />
+
+## Konteinerių palyginimas (`std::vector` vs `std::list`):
+
+### 1 000 įrašų:
+
+| Operacija | Vector (s) | List (s) |
+| :--- | :---: | :---: |
+| Nuskaitymas | 0.00138 | 0.00133 |
+| Dalinimas | 0.00011 | 0.00010 |
+| Rūšiavimas | 0.00013 | 0.00008 |
+| Išvedimas (kietiakiai) | 0.00216 | 0.01531 |
+| Išvedimas (vargšiukai) | 0.00168 | 0.00997 |
+| **Viso** | **0.00546** | **0.02680** |
+
+### 10 000 įrašų:
+
+| Operacija | Vector (s) | List (s) |
+| :--- | :---: | :---: |
+| Nuskaitymas | 0.01053 | 0.00936 |
+| Dalinimas | 0.00111 | 0.00092 |
+| Rūšiavimas | 0.00113 | 0.00156 |
+| Išvedimas (kietiakiai) | 0.00538 | 0.00679 |
+| Išvedimas (vargšiukai) | 0.00374 | 0.00478 |
+| **Viso** | **0.02188** | **0.02341** |
+
+### 100 000 įrašų:
+
+| Operacija | Vector (s) | List (s) |
+| :--- | :---: | :---: |
+| Nuskaitymas | 0.07710 | 0.09679 |
+| Dalinimas | 0.00778 | 0.01036 |
+| Rūšiavimas | 0.01357 | 0.05062 |
+| Išvedimas (kietiakiai) | 0.03220 | 0.05698 |
+| Išvedimas (vargšiukai) | 0.02281 | 0.04014 |
+| **Viso** | **0.15346** | **0.25489** |
+
+### 1 000 000 įrašų:
+
+| Operacija | Vector (s) | List (s) |
+| :--- | :---: | :---: |
+| Nuskaitymas | 0.67681 | 1.05186 |
+| Dalinimas | 0.07455 | 0.10406 |
+| Rūšiavimas | 0.16367 | 1.11279 |
+| Išvedimas (kietiakiai) | 0.31037 | 0.60290 |
+| Išvedimas (vargšiukai) | 0.21414 | 0.40782 |
+| **Viso** | **1.43954** | **3.27943** |
+
+### 10 000 000 įrašų:
+
+| Operacija | Vector (s) | List (s) |
+| :--- | :---: | :---: |
+| Nuskaitymas | 9.03028 | 10.21016 |
+| Dalinimas | 0.61413 | 1.05008 |
+| Rūšiavimas | 2.52699 | 10.72600 |
+| Išvedimas (kietiakiai) | 4.07423 | 5.24164 |
+| Išvedimas (vargšiukai) | 3.09844 | 3.96007 |
+| **Viso** | **19.34406** | **31.18795** |
+
+## Strategijų testavimas
+
+1 strategija: Bendro konteinerio skaidymas i du naujus konteinerius (vargsiukai ir kietiakiai):
+
+<img width="864" height="270" alt="image" src="https://github.com/user-attachments/assets/d91b87dd-2361-40be-a00f-469ab323623b" />
+
+2 strategija: Skaidymas panaudojant viena nauja konteineri (vargsiukai) ir trynima is bendro:
+
+<img width="866" height="272" alt="image" src="https://github.com/user-attachments/assets/9a774b4a-ffe5-4cfd-9489-922966e69b04" />
+
+3 strategija: Optimizuotas skaidymas (vector: partition + move, list: splice):
+
+<img width="872" height="278" alt="image" src="https://github.com/user-attachments/assets/f645c165-73c2-4465-b0ae-0c75c9e8db5e" />
