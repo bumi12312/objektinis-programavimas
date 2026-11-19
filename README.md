@@ -4,6 +4,10 @@ Programa skirta studentų galutiniams balams apskaičiuoti pagal namų darbų (v
 
 ---
 
+## Įdėgimo instrukcija
+
+- Atsisiųskite visus failus.
+- 
 ## Pagrindinės programos funkcijos
 
 * **Duomenų įvestis ir generavimas:** rankinis duomenų įvedimas, atsitiktinis studentų generavimas, duomenų nuskaitymas iš failo bei 5 testinių failų (`1 000` – `10 000 000` įrašų) generavimas.
@@ -16,8 +20,8 @@ Programa skirta studentų galutiniams balams apskaičiuoti pagal namų darbų (v
 ## Versijų istorija (Releases)
 
 * **v0.1** – Pradinė programos versija: rankinis duomenų įvedimas, atsitiktinis pažymių generavimas, galutinio balo skaičiavimas pagal vidurkį ir medianą, rezultatų išvedimas terminale.
-* **v0.2** – Pridėtas duomenų nuskaitymas iš failų, 5 testinių failų (`1000`–`10000000` įrašų) generavimas, studentų skirstymas į dvi kategorijas (`< 5.0` ir `>= 5.0`) bei `std::vector` ir `std::list` spartos palyginimas.
-* **v0.3** – Programos kodas išskaidytas į modulinius `.h` ir `.cpp` failus, įdiegtas objektų adresų atmintyje atvaizdavimas bei realizuotos ir ištestuotos 3 studentų skirstymo strategijos (įskaitant STL algoritmus `copy_if` + `remove_if`, `partition`, `stable_partition` ir `std::list::splice`).
+* **v0.2** – Sukurtas studentų failų generatorius. Be to pridėta funkcija kuri suskaido studentus į dvi grupes, pirma - kurių galutinis pažymys >=5, antra - kurių galutinis pažymys <5. Taip pat pridėtas rikiavimas. Programos kodas išskaidytas į modulinius `.h` ir `.cpp` failus.
+* **v0.3** – Patobulinta programos v0.2 versija ir atlikta studentų rūšiavimo bei duomenų suvedimo spartos analizė.
 
 ---
 
@@ -147,3 +151,17 @@ Testavimo sistema:
 3 strategija: Optimizuotas skaidymas (vector: partition + move, list: splice):
 
 <img width="872" height="278" alt="image" src="https://github.com/user-attachments/assets/f645c165-73c2-4465-b0ae-0c75c9e8db5e" />
+
+# Išvados
+
+1. **`std::vector` ir `std::list` spartos palyginimas:**
+   * Didėjant įrašų skaičiui (`100 000` – `10 000 000`), `std::vector` yra ženkliai spartesnis už `std::list` visose operacijose.
+   * Didžiausias skirtumas išryškėja **rūšiavimo** etape: surūšiuoti `1 000 000` įrašų su `std::vector` užtruko `0,16 s`, o su `std::list` – `1,11 s` (~6,8 karto lėčiau);
+2. **Duomenų kiekio įtaka:**
+   * Mažuose failuose (`1 000` – `10 000` įrašų) abiejų konteinerių apdorojimo laikas skiriasi tik tūkstantosiomis sekundės dalimis (`0,02188 s` vs `0,02341 s` ties `10 000` įrašų), o galutinį rezultatą labiau veikia disko įvesties/išvesties (I/O) svyravimai nei paties konteinerio struktūra. Realus duomenų struktūros pranašumas pasimato tik nuo `100 000` ir daugiau įrašų.
+
+3. **Studentų skirstymo strategijų efektyvumas:**
+   * **1 strategija** (skaidymas į du naujus konteinerius) veikia tiesiniu $O(n)$ laiku ir yra greita, tačiau reikalauja dvigubai daugiau operatyviosios atminties, nes vienu metu atmintyje laikomas ir pradinis konteineris, ir abi išskaidytos jo kopijos.
+   * **2 strategija** (vienas naujas konteineris + trynimas iš bendro) su mažais failais dirba pakankamai greitai, tačiau didėjant įrašų skaičiui `std::vector` vykdymo laikas pradeda drastiškai ilgėti.
+   * **3 strategija** (optimizuotas skaidymas naudojant `std::partition` + perkėlimą vektoriui ir `std::list::splice` sąrašui) yra greičiausia ir efektyviausia – ji išlaiko tiesinį $O(n)$ veikimo laiką ir nešvaisto papildomos atminties duomenų kopijavimui.
+
