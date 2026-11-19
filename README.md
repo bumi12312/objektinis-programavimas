@@ -6,8 +6,31 @@ Programa skirta studentų galutiniams balams apskaičiuoti pagal namų darbų (v
 
 ## Įdėgimo instrukcija
 
-- Atsisiųskite visus failus.
-- 
+## Diegimo ir paleidimo instrukcija
+
+1. **Atsisiųskite projektą:** atsisiųskite `.zip` archyvą iš GitHub ir išarchyvuokite jį į pasirinktą aplanką.
+2. **Įsitikinkite, kad įdiegtas CMake:** terminale patikrinkite versiją komanda `cmake --version`. Jei neįdiegtas, atsisiųskite iš [cmake.org/download](https://cmake.org/download/) (Windows) arba įdiekite per terminalą (`brew install cmake` macOS, `sudo apt-get install cmake` Linux).
+3. **Sukurkite `build` aplanką ir atidarykite jį terminale:** aplanke **"Kodo failai"** įvykdykite:
+   ```bash
+   mkdir build && cd build
+   ```
+4. **Sukonfigūruokite projektą:** terminale įveskite:
+   ```bash
+   cmake ..
+   ```
+   *(Jei Windows sistemoje naudojate MinGW, įveskite: `cmake -G "MinGW Makefiles" ..`)*
+5. **Sukompiliuokite programą:** terminale įveskite:
+   ```bash
+   cmake --build . --config Release
+   ```
+   *(Arba `make` / `mingw32-make`, priklausomai nuo naudojamo kompiliatoriaus.)*
+6. **Paleiskite programą:** `build` (arba `build\Release`) aplanke atsiras vykdomasis failas `studentai.exe` (Linux/macOS – `studentai`). Paleiskite jį paspaudę dukart arba terminale:
+   ```bash
+   .\studentai.exe          # Windows (MinGW)
+   .\Release\studentai.exe  # Windows (MSVC)
+   ./studentai              # Linux / macOS
+   ```
+   
 ## Pagrindinės programos funkcijos
 
 * **Duomenų įvestis ir generavimas:** rankinis duomenų įvedimas, atsitiktinis studentų generavimas, duomenų nuskaitymas iš failo bei 5 testinių failų (`1 000` – `10 000 000` įrašų) generavimas.
