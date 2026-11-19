@@ -9,7 +9,7 @@
 #include "kategorijos.h"
 #include "analize.h"
 #include "testas.h"
-#include "strategijosTestas.h"
+#include "strategijos_testas.h"
 
 using namespace std;
 
