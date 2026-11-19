@@ -1,12 +1,15 @@
-#include "strategijosTestas.h"
+#include "strategijos_testas.h"
 #include "strategijos.h"
 #include "konteineriai.h"
 #include "timer.h"
+#include <algorithm>
 #include <climits>
 #include <functional>
 #include <iomanip>
 #include <iostream>
-#include <sstream>
+#include <list>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -26,45 +29,10 @@ struct Strategija {
 
 template <typename C>
 struct Rezultatai {
+    vector<int> dydziai;
     vector<vector<double>> laikai;
     vector<vector<size_t>> objektai;
 };
-
-string skaicius(double v, int tikslumas) {
-    ostringstream ss;
-    ss << fixed << setprecision(tikslumas) << v;
-    return ss.str();
-}
-
-void rodytiLentele(const string &pavadinimas, const vector<string> &antrastes,
-                   const vector<vector<string>> &eilutes) {
-    size_t n = antrastes.size();
-    vector<size_t> plotis(n);
-    for (size_t i = 0; i < n; i++) plotis[i] = antrastes[i].size();
-    for (const auto &e : eilutes)
-        for (size_t i = 0; i < n && i < e.size(); i++) plotis[i] = max(plotis[i], e[i].size());
-
-    size_t viso = 3 * (n - 1);
-    for (size_t i = 0; i < n; i++) viso += plotis[i];
-    string dviguba(viso, '='), vienguba(viso, '-');
-
-    auto eilute = [&](const vector<string> &e) {
-        for (size_t i = 0; i < n; i++) {
-            cout << left << setw(plotis[i]) << (i < e.size() ? e[i] : "");
-            if (i + 1 < n) cout << " | ";
-        }
-        cout << "\n";
-    };
-
-    cout << "\n" << dviguba << "\n" << pavadinimas << "\n" << dviguba << "\n";
-    eilute(antrastes);
-    cout << dviguba << "\n";
-    for (const auto &e : eilutes) {
-        eilute(e);
-        cout << vienguba << "\n";
-    }
-    cout << flush;
-}
 
 template <typename C>
 void matuotiDydi(const C &baze, int n, const vector<Strategija<C>> &strategijos,
@@ -72,16 +40,17 @@ void matuotiDydi(const C &baze, int n, const vector<Strategija<C>> &strategijos,
     size_t tikimasVargsiuku = count_if(baze.begin(), baze.end(), yraVargsiukas);
     vector<double> laikai;
     vector<size_t> objektai;
+
     for (const auto &st : strategijos) {
         if (n > st.maxIrasu) {
-            laikai.push_back(-1);
+            laikai.push_back(-1.0);
             objektai.push_back(0);
             continue;
         }
-        double suma = 0;
+        double suma = 0.0;
         size_t obj = 0;
         for (int b = 0; b < BANDYMU; b++) {
-            C s = baze;               // kopijavimas nematuojamas
+            C s = baze;
             C vargsiukai, kietiakiai;
             Timer t;
             st.vykdyti(s, vargsiukai, kietiakiai);
@@ -93,60 +62,93 @@ void matuotiDydi(const C &baze, int n, const vector<Strategija<C>> &strategijos,
         laikai.push_back(suma / BANDYMU);
         objektai.push_back(obj);
     }
+    rez.dydziai.push_back(n);
     rez.laikai.push_back(laikai);
     rez.objektai.push_back(objektai);
 }
 
-template <typename C>
-void spausdintiLaikus(const string &pavadinimas, const vector<Strategija<C>> &strategijos,
-                      const Rezultatai<C> &rez) {
-    vector<string> antrastes;
-    antrastes.push_back("Irasu sk.");
-    for (const auto &st : strategijos) antrastes.push_back(st.pavadinimas);
+void spausdintiStrategijosLentele(int nr, const string &aprasymas,
+                                  const Rezultatai<Vek> &vekRez, size_t vekIdx,
+                                  const Rezultatai<Sar> &sarRez, size_t sarIdx) {
+    cout << "\n" << nr << " strategija: " << aprasymas << "\n\n";
+    cout << "+----------------+--------------+--------------+\n";
+    cout << "| " << left << setw(14) << "Irasu skaicius"
+         << " | " << right << setw(12) << "Vector (s)"
+         << " | " << right << setw(12) << "List (s)" << " |\n";
+    cout << "+----------------+--------------+--------------+\n";
 
-    vector<vector<string>> eilutes;
-    for (size_t i = 0; i < rez.laikai.size(); i++) {
-        vector<string> e;
-        e.push_back(to_string(DYDZIAI[i]));
-        for (double l : rez.laikai[i]) e.push_back(l < 0 ? "praleista" : skaicius(l, 6));
-        eilutes.push_back(e);
+    cout << fixed << setprecision(5);
+    for (size_t i = 0; i < vekRez.dydziai.size(); i++) {
+        double vLaikas = vekRez.laikai[i][vekIdx];
+        double lLaikas = sarRez.laikai[i][sarIdx];
+
+        cout << "| " << left << setw(14) << vekRez.dydziai[i] << " | ";
+        if (vLaikas < 0) cout << right << setw(12) << "-";
+        else             cout << right << setw(12) << vLaikas;
+
+        cout << " | ";
+        if (lLaikas < 0) cout << right << setw(12) << "-";
+        else             cout << right << setw(12) << lLaikas;
+        cout << " |\n";
     }
-    rodytiLentele(pavadinimas + " - dalijimo laikas (s, " + to_string(BANDYMU) +
-                  " bandymu vidurkis)", antrastes, eilutes);
+    cout << "+----------------+--------------+--------------+\n";
+}
+
+void spausdintiVektoriaus3Variantus(const Rezultatai<Vek> &vekRez) {
+    cout << "\nPapildoma: std::vector 3 strategijos algoritmu palyginimas (s):\n\n";
+    cout << "+----------------+----------------+----------------+----------------+\n";
+    cout << "| " << left << setw(14) << "Irasu skaicius"
+         << " | " << right << setw(14) << "3a copy+remove"
+         << " | " << right << setw(14) << "3b partition"
+         << " | " << right << setw(14) << "3c stable_part" << " |\n";
+    cout << "+----------------+----------------+----------------+----------------+\n";
+
+    cout << fixed << setprecision(5);
+    for (size_t i = 0; i < vekRez.dydziai.size(); i++) {
+        cout << "| " << left << setw(14) << vekRez.dydziai[i]
+             << " | " << right << setw(14) << vekRez.laikai[i][2]
+             << " | " << right << setw(14) << vekRez.laikai[i][3]
+             << " | " << right << setw(14) << vekRez.laikai[i][4] << " |\n";
+    }
+    cout << "+----------------+----------------+----------------+----------------+\n";
 }
 
 template <typename C>
 void spausdintiAtminti(const string &pavadinimas, size_t baitaiVienam, const Rezultatai<C> &rez) {
-    vector<string> antrastes = {"Irasu sk.", "1 strat. objektu", "2/3 strat. objektu",
-                                "1 strat. MB", "2/3 strat. MB", "Kartu daugiau (1 strat.)"};
-    vector<vector<string>> eilutes;
+    cout << "\n" << pavadinimas << " - atmintis po dalijimo (apytiksl.):\n";
+    cout << "+----------------+------------------+------------------+--------------+--------------+\n";
+    cout << "| " << left << setw(14) << "Irasu skaicius"
+         << " | " << right << setw(16) << "1 strat. obj."
+         << " | " << right << setw(16) << "2/3 strat. obj."
+         << " | " << right << setw(12) << "1 strat. MB"
+         << " | " << right << setw(12) << "2/3 str. MB" << " |\n";
+    cout << "+----------------+------------------+------------------+--------------+--------------+\n";
+
+    cout << fixed << setprecision(2);
     for (size_t i = 0; i < rez.objektai.size(); i++) {
         size_t o1 = rez.objektai[i].front();
         size_t o3 = rez.objektai[i].back();
-        vector<string> e;
-        e.push_back(to_string(DYDZIAI[i]));
-        e.push_back(to_string(o1));
-        e.push_back(to_string(o3));
-        e.push_back(skaicius(o1 * baitaiVienam / 1048576.0, 1));
-        e.push_back(skaicius(o3 * baitaiVienam / 1048576.0, 1));
-        e.push_back(skaicius((double)o1 / o3, 2));
-        eilutes.push_back(e);
+        cout << "| " << left << setw(14) << rez.dydziai[i]
+             << " | " << right << setw(16) << o1
+             << " | " << right << setw(16) << o3
+             << " | " << right << setw(12) << (o1 * baitaiVienam / 1048576.0)
+             << " | " << right << setw(12) << (o3 * baitaiVienam / 1048576.0) << " |\n";
     }
-    rodytiLentele(pavadinimas + " - atmintis po dalijimo (apytiksl.)", antrastes, eilutes);
+    cout << "+----------------+------------------+------------------+--------------+--------------+\n";
 }
 
 void palygintiStrategijas() {
     vector<Strategija<Vek>> vekStr = {
-        {"1 strat. (kopijavimas)",          dalintiS1<Vek>,  INT_MAX},
-        {"2 strat. (erase)",                dalintiS2<Vek>,  MAX_NAIVUS_VEKTORIUS},
-        {"3a copy_if+remove_if",            dalintiVekS3a,   INT_MAX},
-        {"3b partition",                    dalintiVekS3b,   INT_MAX},
-        {"3c stable_partition",             dalintiVekS3c,   INT_MAX}
+        {"1 strat. (kopijavimas)", dalintiS1<Vek>, INT_MAX},
+        {"2 strat. (erase)",       dalintiS2<Vek>, MAX_NAIVUS_VEKTORIUS},
+        {"3a copy_if+remove_if",   dalintiVekS3a,  INT_MAX},
+        {"3b partition",           dalintiVekS3b,  INT_MAX},
+        {"3c stable_partition",    dalintiVekS3c,  INT_MAX}
     };
     vector<Strategija<Sar>> sarStr = {
-        {"1 strat. (kopijavimas)",          dalintiS1<Sar>,  INT_MAX},
-        {"2 strat. (erase)",                dalintiS2<Sar>,  INT_MAX},
-        {"3 strat. (splice)",               dalintiListS3,   INT_MAX}
+        {"1 strat. (kopijavimas)", dalintiS1<Sar>, INT_MAX},
+        {"2 strat. (erase)",       dalintiS2<Sar>, INT_MAX},
+        {"3 strat. (splice)",      dalintiListS3,  INT_MAX}
     };
 
     Rezultatai<Vek> vekRez;
@@ -159,14 +161,34 @@ void palygintiStrategijas() {
             break;
         }
         Sar bazeList(baze.begin(), baze.end());
-        cout << "Matuojama: " << n << " irasu..." << endl;
+        cout << "Matuojamos strategijos: " << n << " irasu..." << endl;
         matuotiDydi(baze, n, vekStr, vekRez);
         matuotiDydi(bazeList, n, sarStr, sarRez);
     }
 
-    spausdintiLaikus("std::vector", vekStr, vekRez);
-    spausdintiLaikus("std::list", sarStr, sarRez);
+    if (vekRez.dydziai.empty()) return;
+
+    cout << "  STUDENTU SKIRSTYMO STRATEGIJU APZVALGA (" << BANDYMU << " bandymu vidurkis)\n";
+
+    spausdintiStrategijosLentele(
+        1,
+        "Bendro konteinerio skaidymas i du naujus konteinerius (vargsiukai ir kietiakiai).",
+        vekRez, 0, sarRez, 0
+    );
+
+    spausdintiStrategijosLentele(
+        2,
+        "Skaidymas panaudojant viena nauja konteineri (vargsiukai) ir trynima is bendro.",
+        vekRez, 1, sarRez, 1
+    );
+
+    spausdintiStrategijosLentele(
+        3,
+        "Optimizuotas skaidymas (vector: partition + move, list: splice).",
+        vekRez, 3, sarRez, 2
+    );
+
+    spausdintiVektoriaus3Variantus(vekRez);
     spausdintiAtminti("std::vector", sizeof(studentas) + 5 * sizeof(int), vekRez);
     spausdintiAtminti("std::list", sizeof(studentas) + 5 * sizeof(int) + 2 * sizeof(void *), sarRez);
-    cout << "\nLaikai sekundemis.\n";
 }
